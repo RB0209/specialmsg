@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>A Special Message</title>
+  <meta name="description" content="A sweet surprise video reveal for someone special." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#0f1323; /* deep navy */
+      --bg2:#1b2440; /* indigo */
+      --accent:#38b6ff; /* bright sky */
+      --glass: rgba(255,255,255,0.08);
+      --glass-stroke: rgba(255,255,255,0.18);
+      --text:#eaf6ff;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Poppins, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji';
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 80% -10%, #2b3a74 0%, transparent 60%),
+                  radial-gradient(900px 700px at -10% 110%, #19365f 0%, transparent 60%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+    }
+
+    /* floating blobs for a dreamy feel */
+    .blob{position:fixed; filter: blur(40px); opacity: .45; pointer-events:none; z-index:0}
+    .blob:nth-child(1){width:340px;height:340px;background:#8ec5ff; top:10%; left:5%; animation: float 15s ease-in-out infinite}
+    .blob:nth-child(2){width:420px;height:420px;background:#8a7dff; bottom:5%; right:8%; animation: float 18s ease-in-out infinite reverse}
+    @keyframes float{0%,100%{transform: translateY(0) translateX(0)} 50%{transform: translateY(-18px) translateX(10px)}}
+
+    .container{position:relative; z-index:1; width:min(92vw,840px);}
+
+    .card{
+      position:relative;
+      display:flex; align-items:center; justify-content:center;
+      min-height:220px; padding:28px; text-align:center;
+      border-radius:24px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+      border:1px solid var(--glass-stroke);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.16);
+      backdrop-filter: blur(10px) saturate(120%);
+      -webkit-backdrop-filter: blur(10px) saturate(120%);
+      cursor:pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+      overflow:hidden;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 28px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.18); }
+
+    .glow{
+      position:absolute; inset:-2px; border-radius:26px; z-index:-1;
+      background: conic-gradient(from 180deg at 50% 50%, transparent, rgba(56,182,255,.35), transparent 30%);
+      filter: blur(20px); opacity:.75; pointer-events:none;
+      transition: opacity .3s ease;
+    }
+    .card:hover .glow{opacity:1}
+
+    h1{font-size: clamp(28px, 5vw, 44px); margin:0 0 6px; letter-spacing:.3px}
+    p{margin:0; opacity:.85}
+    .tag{
+      display:inline-flex; align-items:center; gap:8px; margin-bottom:12px;
+      padding:8px 12px; border-radius:999px; font-size:12px; letter-spacing:.3px;
+      background: rgba(56,182,255,.12); border:1px solid rgba(56,182,255,.35);
+      text-transform: uppercase;
+    }
+    .tag-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 14px var(--accent)}
+
+    .tap{ margin-top:14px; font-size:14px; opacity:.75 }
+
+    /* Modal */
+    .modal{ position:fixed; inset:0; display:none; place-items:center; padding:20px; z-index:30; }
+    .modal.open{ display:grid; }
+    .overlay{ position:absolute; inset:0; background: rgba(6,9,20,.72); backdrop-filter: blur(6px); }
+    .modal-card{
+      position:relative; width:min(92vw, 980px); border-radius:20px; overflow:hidden;
+      background: #0b0f1d; border:1px solid var(--glass-stroke);
+      box-shadow: 0 30px 100px rgba(0,0,0,.6);
+      animation: pop .18s ease-out;
+    }
+    @keyframes pop{ from{ transform: scale(.96); opacity:0 } to{ transform: scale(1); opacity:1 } }
+
+    .modal-header{ display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08); background: linear-gradient( to bottom, rgba(255,255,255,.06), rgba(255,255,255,0) ); }
+    .title{ font-weight:600; letter-spacing:.2px }
+    .close{
+      appearance:none; border:0; outline:none; cursor:pointer; background:transparent; color:var(--text);
+      padding:6px 10px; border-radius:10px; font-weight:600; font-size:14px; opacity:.85;
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .close:hover{ opacity:1; background: rgba(255,255,255,.06) }
+
+    .video-wrap{ position:relative; background:black }
+    video{ display:block; width:100%; height:auto; max-height:78vh; object-fit:contain; }
+    .caption{ padding:12px 16px; font-size:14px; opacity:.8; border-top:1px solid rgba(255,255,255,.08) }
+
+    /* small helper footer */
+    .footer{ position:fixed; bottom:14px; left:50%; transform:translateX(-50%); font-size:12px; opacity:.55 }
+    .footer a{ color: var(--accent); text-decoration:none }
+  </style>
+</head>
+<body>
+  <div class="blob"></div>
+  <div class="blob"></div>
+
+  <main class="container">
+    <button id="revealBtn" class="card" aria-haspopup="dialog" aria-controls="messageModal">
+      <span class="glow" aria-hidden="true"></span>
+      <div>
+        <div class="tag"><span class="tag-dot"></span> Surprise</div>
+        <h1>A Special Message</h1>
+        <p>Tap to open your video 🎥💙</p>
+        <div class="tap">Works on mobile & desktop</div>
+      </div>
+    </button>
+  </main>
+
+  <div id="messageModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="overlay" data-close></div>
+    <div class="modal-card">
+      <header class="modal-header">
+        <div id="modalTitle" class="title">For You 💙</div>
+        <button class="close" type="button" data-close>Close ✕</button>
+      </header>
+      <div class="video-wrap">
+        <!--
+          ▶️ HOW TO USE
+          1) Place your video file in the repo. Default path below expects: /assets/VideoAI.mp4
+          2) Keep the name VideoAI.mp4 (or change the src to your file path)
+          3) GitHub Pages will serve it directly.
+        -->
+        <video id="specialVideo" playsinline controls preload="metadata"
+               poster="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?q=80&w=1887&auto=format&fit=crop">
+          <source src="assets/VideoAI.mp4" type="video/mp4" />
+          <source src="assets/VideoAI.webm" type="video/webm" />
+          Sorry, your browser doesn’t support embedded videos.
+        </video>
+      </div>
+      <div class="caption">Turn up the volume and press ▶︎</div>
+    </div>
+  </div>
+
+  <div class="footer">Made with 💙 — <a href="#" id="replay">reset</a></div>
+
+  <script>
+    const revealBtn = document.getElementById('revealBtn');
+    const modal = document.getElementById('messageModal');
+    const video = document.getElementById('specialVideo');
+    const replay = document.getElementById('replay');
+
+    function openModal(){
+      modal.classList.add('open');
+      // On first user gesture, we can safely attempt to play()
+      // Some browsers still require the user to hit play if sound is on.
+      video.currentTime = 0;
+      video.play().catch(()=>{/* ignore autoplay restrictions */});
+    }
+    function closeModal(){
+      modal.classList.remove('open');
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    revealBtn.addEventListener('click', openModal);
+    modal.addEventListener('click', (e)=>{
+      if(e.target.hasAttribute('data-close')) closeModal();
+    });
+    document.addEventListener('keydown',(e)=>{
+      if(e.key==='Escape' && modal.classList.contains('open')) closeModal();
+    });
+    replay.addEventListener('click',(e)=>{ e.preventDefault(); closeModal(); });
+
+    // Optional: support deep-link like ?open=1 or #open
+    const params = new URLSearchParams(location.search);
+    if(params.get('open')==='1' || location.hash==='#open'){
+      // small delay so layout is ready
+      setTimeout(openModal, 200);
+    }
+  </script>
+</body>
+</html>
